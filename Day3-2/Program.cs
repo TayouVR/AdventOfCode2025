@@ -11,24 +11,24 @@ Console.WriteLine("------------------");
 Console.WriteLine(jolts.Sum());
 
 long GetHighestNJolts(List<int> digits, int batteryCount) {
-    List<long> joltDigits = [];
-    int lastDigitPosition = 0;
+    List<int> joltDigits = [];
+    int offset = 0;
+    
     foreach (var i in Enumerable.Range(0, batteryCount)) {
-        var startIndex = lastDigitPosition;
-        var digitCount = digits.Count - (batteryCount - (i + 1)) - lastDigitPosition;
-        var digitRange = digits.GetRange(startIndex, digitCount);
-        var largestDigit = digitRange.Max();
-        lastDigitPosition += digitRange.IndexOf(largestDigit) + 1;
-        var digitWithPositionalOffset = Int64.Parse(largestDigit.ToString().PadRight(batteryCount - i, '0'));
-        var formattedDigits = PrintWithHighlight(digits, startIndex, digitCount, ConsoleColor.Red);
-        Console.WriteLine($"{formattedDigits}: {largestDigit}: {lastDigitPosition.ToString(),3}: {digitWithPositionalOffset.ToString().PadLeft(batteryCount, ' ')}");
-        joltDigits.Add(digitWithPositionalOffset);
+        // joltDigits.Add(digits[offset..^(12 - 1 - i)].Max()); 
+        // offset = digits[offset..].IndexOf(joltDigits.Last()) + 1;
+        var endOffset = batteryCount - 1 - i;
+        var digitRange = digits[offset..^endOffset];
+        joltDigits.Add(digitRange.Max());
+        var formattedDigits = PrintWithHighlight(digits, offset, endOffset);
+        offset += digitRange.IndexOf(joltDigits.Last()) + 1;
+        Console.WriteLine($"{formattedDigits}: {joltDigits.Last()}: {offset.ToString(),3}");
     }
 
-    return joltDigits.Sum();
+    return long.Parse(string.Concat(joltDigits));
 }    
 
-static string PrintWithHighlight(List<int> digits, int startIndex, int count, ConsoleColor highlightColor) {
+static string PrintWithHighlight(List<int> digits, int startIndex, int endOffset) {
     // ANSI color codes (red) and reset
     const string red = "\u001b[31m";
     const string reset = "\u001b[0m";
@@ -38,7 +38,7 @@ static string PrintWithHighlight(List<int> digits, int startIndex, int count, Co
     {
         string s = digits[idx].ToString();
         if (idx == startIndex) s = $"{red}{s}";
-        if (idx == startIndex+count-1) s = $"{s}{reset}";
+        if (idx == digits.Count - endOffset - 1) s = $"{s}{reset}";
         
         outStr += s;
     }
