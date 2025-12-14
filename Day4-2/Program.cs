@@ -10,7 +10,7 @@ int storageColumn = 0;
 int rollsRemovedInThisLoop = -1;
 while (rollsRemovedInThisLoop != 0) {
     rollsRemovedInThisLoop = 0;
-    foreach (var paperRollRow in paperRollsRaw) {
+    foreach (var paperRollRow in paperRollsMap) {
         foreach (var paperRoll in paperRollRow) {
             if (paperRoll == '@') {
                 if (CheckRollAccessibility(storageRow, storageColumn)) {
@@ -18,12 +18,24 @@ while (rollsRemovedInThisLoop != 0) {
                     rollsRemovedInThisLoop++;
                     paperRollsMap[storageRow][storageColumn] = 'x';
                 }
+            } else if (paperRoll == 'x') {
+                paperRollsMap[storageRow][storageColumn] = '.';
             }
             storageColumn++;
         }
         storageRow++;
         storageColumn = 0;
     }
+    storageRow = 0;
+    storageColumn = 0;
+    foreach (var paperRollRow in paperRollsMap) {
+        foreach (var paperRoll in paperRollRow) {
+            Console.Write(paperRoll);
+        }
+        Console.WriteLine();
+    }
+    Console.WriteLine("------------------------------------------------------------");
+    
     
 } 
 
@@ -40,7 +52,7 @@ bool CheckRollAccessibility(int row, int col) {
     int minCol = Math.Max(0, col - 1);
     int maxColExclusive = Math.Min(cols, col + 2);
 
-    Console.WriteLine($"{row},{col}: {minRow},{maxRowExclusive - 1},{minCol},{maxColExclusive - 1}");
+    //Console.WriteLine($"{row},{col}: {minRow},{maxRowExclusive - 1},{minCol},{maxColExclusive - 1}");
 
     var rollsInProximity = paperRollsMap[minRow..maxRowExclusive]
         .Select(r => r[minCol..maxColExclusive])
