@@ -36,7 +36,6 @@ Int64 finalSum = 0;
 foreach (var row in data) {
     var operation = row.op;
     Int64 result = 0;
-    Console.WriteLine($"{string.Join(row.op, row.numbers)} = {result}");
     switch (operation) {
         case '+': {
             result = row.numbers.Select(a => Int64.Parse(a)).Aggregate((a, b) => a + b);
@@ -51,13 +50,9 @@ foreach (var row in data) {
     if (row.numbers.Count <= 0) {
         throw new Exception("No numbers in row");
     }
-    //Console.WriteLine($"{row.numbers.FirstOrDefault()}{row.op}\n{string.Join('\n', row.numbers[1..])}");
+    Console.WriteLine($"{string.Join(row.op, row.numbers)} = {result}");
     finalSum += result;
 }
 
 Console.WriteLine("------------------");
 Console.WriteLine(finalSum);
-
-// my output vs rust output:
-// 59323772873
-// 7450962489289
